@@ -1,0 +1,36 @@
+service: aws-python-api-project
+frameworkVersion: '3'
+
+plugins:
+  - serverless-localstack
+
+custom:
+  localstack:
+    debug: true
+    # list of stages for which the plugin should be enabled
+    stages:
+      - local
+  host: http://localhost #optional - Localstack host to connect to
+  edgePort: 4566 # optional - LocalStack edge port to connect to
+  autostart: # optional - Start LocalStack in Docker on Serverless deploy
+  networks: #optional - attaches the list of networks to the localstack docker container after startup
+    - host
+    - overlay
+  lambda:
+    # Enable this flag to improve performance
+    mountCode: true #specify either "true", or a relative path to the root Lambda mount path
+  docker:
+    # Enable this flag to run "docker ..."
+    sudo: False
+
+provider:
+  name: aws
+  runtime: python3.9
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /
+          method: get
